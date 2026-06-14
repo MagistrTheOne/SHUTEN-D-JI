@@ -1,0 +1,55 @@
+# Phase 1: Supervised Trajectory Learning via LLaMA Factory
+# SHUTEN-DŌJI | NULLXES DAI
+#
+# Objective: Train model to produce well-formed strategic reasoning
+# by imitating high-quality trajectories.
+#
+# Usage: llamafactory-cli train configs/training/phase1_sft.yaml
+
+### Model ###
+model_name_or_path: ./checkpoints/shuten-doji-base  # or HF path after upload
+trust_remote_code: true
+
+### Method ###
+stage: sft
+do_train: true
+finetuning_type: lora
+
+### LoRA ###
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target: all  # train all linear layers
+
+### Dataset ###
+dataset: shuten_sft_business,shuten_sft_logistics,shuten_sft_markets
+dataset_dir: data/trajectories/llamafactory_export
+template: llama3
+cutoff_len: 8192
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### Training ###
+output_dir: outputs/phase1_sft
+logging_steps: 10
+save_steps: 500
+save_total_limit: 5
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+learning_rate: 5.0e-5
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+gradient_checkpointing: true
+ddp_timeout: 180000000
+
+### Evaluation ###
+val_size: 0.02
+per_device_eval_batch_size: 4
+eval_strategy: steps
+eval_steps: 500
+
+### Logging ###
+report_to: tensorboard
+logging_dir: outputs/phase1_sft/logs

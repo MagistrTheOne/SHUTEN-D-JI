@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WorldState",
+  "description": "SHUTEN-DŌJI world state schema — initial conditions for strategic scenarios",
+  "type": "object",
+  "required": ["id", "domain", "complexity_level", "entities"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "domain": {
+      "type": "string",
+      "enum": ["business", "geopolitics", "logistics", "markets", "technology", "organizational", "operations"]
+    },
+    "complexity_level": {"type": "integer", "minimum": 1, "maximum": 5},
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "type": {"type": "string", "enum": ["organization", "person", "system", "resource", "location", "asset"]},
+          "attributes": {"type": "object"},
+          "capabilities": {"type": "array", "items": {"type": "string"}},
+          "constraints": {"type": "array", "items": {"type": "string"}},
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "owner_id": {"type": "string"},
+                "description": {"type": "string"},
+                "priority": {"type": "number", "minimum": 0, "maximum": 1},
+                "deadline": {"type": ["string", "null"]},
+                "measurable_criteria": {"type": "array", "items": {"type": "string"}},
+                "conflicts_with": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "target_id", "type"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "target_id": {"type": "string"},
+          "type": {"type": "string", "enum": ["controls", "depends_on", "competes_with", "allies_with", "supplies", "reports_to", "threatens", "funds"]},
+          "strength": {"type": "number", "minimum": 0, "maximum": 1},
+          "volatility": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "type": {"type": "string", "enum": ["disruption", "opportunity", "threat", "deadline", "transition", "discovery"]},
+          "description": {"type": "string"},
+          "affected_entity_ids": {"type": "array", "items": {"type": "string"}},
+          "probability": {"type": "number", "minimum": 0, "maximum": 1},
+          "impact_magnitude": {"type": "number", "minimum": -1, "maximum": 1}
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string", "enum": ["resource", "temporal", "regulatory", "physical", "informational", "political"]},
+          "scope_entity_ids": {"type": "array", "items": {"type": "string"}},
+          "description": {"type": "string"},
+          "severity": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "source": {"type": "string"},
+          "probability": {"type": "number", "minimum": 0, "maximum": 1},
+          "impact": {"type": "number", "minimum": 0, "maximum": 1},
+          "affected_entity_ids": {"type": "array", "items": {"type": "string"}},
+          "mitigatable": {"type": "boolean"}
+        }
+      }
+    },
+    "information_state": {
+      "type": "object",
+      "properties": {
+        "known_to_all": {"type": "array", "items": {"type": "string"}},
+        "known_to_subset": {"type": "object"},
+        "unknown_but_discoverable": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "metadata": {"type": "object"}
+  }
+}

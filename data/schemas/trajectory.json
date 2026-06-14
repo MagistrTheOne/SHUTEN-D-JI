@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentTrajectory",
+  "description": "SHUTEN-DŌJI agent trajectory schema — complete interaction record",
+  "type": "object",
+  "required": ["id", "agent_config", "initial_state_id", "objective", "steps"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid"},
+    "agent_config": {
+      "type": "object",
+      "required": ["id", "role"],
+      "properties": {
+        "id": {"type": "string"},
+        "role": {"type": "string", "enum": ["analyst", "planner", "researcher", "critic", "executor", "forecaster", "negotiator"]},
+        "name": {"type": "string"},
+        "cognitive_profile": {
+          "type": "object",
+          "properties": {
+            "risk_tolerance": {"type": "number", "minimum": 0, "maximum": 1},
+            "time_preference": {"type": "number", "minimum": 0, "maximum": 1},
+            "information_seeking": {"type": "number", "minimum": 0, "maximum": 1},
+            "confidence_calibration": {"type": "number", "minimum": 0, "maximum": 1},
+            "creativity": {"type": "number", "minimum": 0, "maximum": 1},
+            "thoroughness": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        },
+        "domain_expertise": {"type": "object"},
+        "available_actions": {"type": "array", "items": {"type": "string"}},
+        "system_prompt": {"type": "string"}
+      }
+    },
+    "initial_state_id": {"type": "string"},
+    "objective": {"type": "string"},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["turn", "observation", "reasoning", "action"],
+        "properties": {
+          "turn": {"type": "integer", "minimum": 0},
+          "observation": {
+            "type": "object",
+            "properties": {
+              "visible_state": {"type": "object"},
+              "new_information": {"type": "array", "items": {"type": "string"}},
+              "feedback": {"type": ["string", "null"]},
+              "reward_signal": {"type": ["number", "null"]}
+            }
+          },
+          "reasoning": {"type": "string"},
+          "action": {
+            "type": "object",
+            "required": ["type", "description"],
+            "properties": {
+              "id": {"type": "string"},
+              "type": {"type": "string", "enum": ["analyze", "plan", "research", "critique", "execute", "forecast", "negotiate", "communicate", "observe", "decide", "tool_use"]},
+              "description": {"type": "string"},
+              "target": {"type": ["string", "null"]},
+              "parameters": {"type": "object"},
+              "reasoning": {"type": "string"}
+            }
+          },
+          "outcome": {"type": "string"},
+          "metrics": {"type": "object"}
+        }
+      }
+    },
+    "final_outcome": {"type": "string"},
+    "success_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "total_tokens": {"type": "integer", "minimum": 0},
+    "metadata": {"type": "object"}
+  }
+}

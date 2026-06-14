@@ -1,0 +1,53 @@
+# Phase 3: Direct Preference Optimization via LLaMA Factory
+# SHUTEN-DŌJI | NULLXES DAI
+#
+# Objective: Align model toward better strategic outcomes using paired
+# trajectories (good vs bad for same scenario).
+#
+# Usage: llamafactory-cli train configs/training/phase3_dpo.yaml
+
+### Model ###
+model_name_or_path: ./checkpoints/shuten-doji-base
+adapter_name_or_path: outputs/phase2_tools  # load Phase 2 LoRA
+trust_remote_code: true
+
+### Method ###
+stage: dpo
+do_train: true
+finetuning_type: lora
+pref_beta: 0.1
+pref_loss: sigmoid  # sigmoid DPO loss
+
+### LoRA ###
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+lora_target: all
+
+### Dataset ###
+dataset: shuten_dpo_pairs
+dataset_dir: data/trajectories/llamafactory_export
+template: llama3
+cutoff_len: 8192
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### Training ###
+output_dir: outputs/phase3_dpo
+logging_steps: 10
+save_steps: 200
+save_total_limit: 3
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 1.0e-5
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+gradient_checkpointing: true
+
+### Evaluation ###
+val_size: 0.05
+per_device_eval_batch_size: 2
+eval_strategy: steps
+eval_steps: 200

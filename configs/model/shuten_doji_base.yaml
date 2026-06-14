@@ -1,0 +1,56 @@
+# SHUTEN-DŌJI Model Configuration — Base (132B total / 14B active)
+# Team: NULLXES DAI (Digital AI)
+
+model_name: "shuten-doji-base"
+model_type: "custom_moe"
+
+architecture:
+  hidden_size: 5120
+  intermediate_size: 13824
+  num_layers: 48
+  vocab_size: 128256
+
+  # Attention (GQA)
+  num_attention_heads: 48
+  num_kv_heads: 8
+  head_dim: 128
+  max_position_embeddings: 131072
+  rope_theta: 500000.0
+
+  # MoE
+  num_experts: 128
+  num_shared_experts: 2
+  num_experts_per_token: 6
+  expert_hidden_size: 2048
+  router_aux_loss_coef: 0.01
+  router_z_loss_coef: 0.001
+  num_dense_layers: 1
+
+  # Memory
+  num_memory_slots: 256
+  memory_dim: 512
+
+  # Token types
+  num_token_types: 9
+
+  # Norms
+  rms_norm_eps: 1.0e-6
+
+  # Initialization
+  initializer_range: 0.02
+  tie_word_embeddings: false
+
+# Estimated parameters
+estimates:
+  total_params: "~132B"
+  active_params: "~14B"
+  sparsity_ratio: "~9.4x"
+
+# Expert group assignments (soft, learned routing overrides these)
+expert_groups:
+  state_encoding: [0, 20]     # experts 0-19
+  analysis: [20, 45]          # experts 20-44
+  simulation: [45, 70]        # experts 45-69
+  planning: [70, 95]          # experts 70-94
+  evaluation: [95, 115]       # experts 95-114
+  general: [115, 128]         # experts 115-127

@@ -1,0 +1,46 @@
+# Data Factory Pipeline Configuration
+# SHUTEN-DŌJI | NULLXES DAI
+
+pipeline:
+  num_trajectories: 10000
+  batch_size: 50
+  num_workers: 4
+  seed: 42
+
+  domains:
+    - business
+    - logistics
+    - markets
+
+  complexity_range: [1, 5]
+
+  agent_roles:
+    - analyst
+    - planner
+    - researcher
+    - critic
+    - executor
+    - forecaster
+
+  multi_agent: false
+  agents_per_scenario: 1
+
+environment:
+  max_steps: 30
+  stochasticity: 0.2
+  hidden_information: true
+  delayed_feedback: true
+
+evaluation:
+  w_outcome: 0.4
+  w_process: 0.25
+  w_efficiency: 0.2
+  w_risk_penalty: 0.15
+  sft_threshold: 0.7
+  rl_min_threshold: 0.3
+  rl_max_threshold: 0.9
+
+storage:
+  base_path: data/trajectories
+  max_per_domain: 100000
+  export_format: sharegpt
