@@ -363,7 +363,7 @@ if __name__ == "__main__":
     parser.add_argument("--num", type=int, default=1000, help="Number of trajectories to generate")
     parser.add_argument("--output", type=str, default="data/trajectories", help="Output directory")
     parser.add_argument("--port", type=int, default=8000, help="vLLM server port")
-    parser.add_argument("--model", type=str, default="/workspace/models/qwen3-235b-gptq")
+    parser.add_argument("--model", type=str, default="/workspace/models/qwen3.6-27b")
     parser.add_argument("--batch-size", type=int, default=16, help="Concurrent batch size")
     parser.add_argument("--concurrency", type=int, default=32, help="Max concurrent requests")
     args = parser.parse_args()

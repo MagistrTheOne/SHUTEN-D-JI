@@ -1,8 +1,8 @@
-### SHUTEN SFT — Qwen3.5-122B-A10B QLoRA on 1x H200 (141GB)
-### bitsandbytes 4-bit — no GPTQ/Marlin
+### SHUTEN SFT — Qwen3.6-27B QLoRA on 2x A100 (160 GB)
+### 4-bit bnb fits on 1 GPU; inference uses TP=2 via vLLM
 
 ### Model
-model_name_or_path: /workspace/models/qwen3.5-122b
+model_name_or_path: /workspace/models/qwen3.6-27b
 trust_remote_code: true
 
 ### Method — QLoRA
@@ -23,7 +23,7 @@ dataset_dir: /workspace/SHUTEN-D-JI/data/trajectories
 dataset: shuten_sft_train
 eval_dataset: shuten_sft_eval
 template: qwen3
-cutoff_len: 1024
+cutoff_len: 4096
 overwrite_cache: true
 preprocessing_num_workers: 4
 
@@ -37,7 +37,7 @@ warmup_ratio: 0.05
 weight_decay: 0.01
 max_grad_norm: 1.0
 
-### Precision — bf16 on H200
+### Precision
 bf16: true
 
 ### Evaluation
@@ -49,7 +49,7 @@ eval_steps: 50
 save_strategy: steps
 save_steps: 100
 save_total_limit: 5
-output_dir: /workspace/outputs/shuten-sft
+output_dir: /workspace/outputs/shuten-sft-27b
 
 ### Logging
 logging_steps: 10

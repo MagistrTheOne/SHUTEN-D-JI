@@ -4,8 +4,8 @@ set -euo pipefail
 
 MODEL_PATH="${MODEL_PATH:-/workspace/models/qwen3.5-122b}"
 PORT="${PORT:-8000}"
-MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
-GPU_UTIL="${GPU_UTIL:-0.92}"
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-4096}"
+GPU_UTIL="${GPU_UTIL:-0.95}"
 
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export PATH="/workspace/SHUTEN-D-JI/.venv/bin:${PATH}"
@@ -18,7 +18,7 @@ echo "Port:  $PORT"
 echo "Max len: $MAX_MODEL_LEN"
 echo "=========================="
 
-# Text-only: skip vision encoder memory (multimodal model)
+# BF16 weights ~233GB — use FP8 on H200 (141GB). Text-only skips vision RAM.
 exec python -m vllm.entrypoints.openai.api_server \
   --model "$MODEL_PATH" \
   --tensor-parallel-size 1 \
@@ -26,7 +26,7 @@ exec python -m vllm.entrypoints.openai.api_server \
   --gpu-memory-utilization "$GPU_UTIL" \
   --port "$PORT" \
   --dtype bfloat16 \
+  --quantization fp8 \
   --trust-remote-code \
-  --max-num-seqs 32 \
-  --limit-mm-per-prompt '{"image": 0, "video": 0}' \
+  --max-num-seqs 16 \
   --disable-log-requests

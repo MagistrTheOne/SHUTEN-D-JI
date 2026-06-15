@@ -20,7 +20,7 @@ class LLMConfig:
     """Configuration for vLLM connection."""
     base_url: str = "http://localhost:8000/v1"
     api_key: str = "EMPTY"
-    model: str = "/workspace/models/qwen3-235b-gptq"
+    model: str = "/workspace/models/qwen3.6-27b"
     max_tokens: int = 2048
     temperature: float = 0.7
     top_p: float = 0.9
