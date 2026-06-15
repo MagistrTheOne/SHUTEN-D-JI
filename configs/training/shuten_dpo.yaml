@@ -1,0 +1,55 @@
+### SHUTEN DPO Training Config
+### Preference alignment — teaches SHUTEN to prefer high-quality strategic outputs
+### Runs AFTER SFT phase, uses the SFT checkpoint as base
+
+### Model (load SFT checkpoint)
+model_name_or_path: /workspace/models/qwen3-235b-gptq
+adapter_name_or_path: /workspace/outputs/shuten-sft
+trust_remote_code: true
+
+### Method — DPO on QLoRA
+stage: dpo
+do_train: true
+finetuning_type: lora
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target: all
+pref_beta: 0.1
+
+### Dataset
+dataset_dir: /workspace/SHUTEN-D-JI/data/trajectories
+dataset: shuten_dpo_train
+template: qwen3
+cutoff_len: 8192
+overwrite_cache: true
+
+### Training
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 5.0e-5
+num_train_epochs: 1
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+weight_decay: 0.01
+max_grad_norm: 1.0
+
+### DeepSpeed
+deepspeed: configs/training/deepspeed_zero2.json
+
+### Precision
+bf16: true
+
+### Saving
+save_strategy: steps
+save_steps: 100
+save_total_limit: 3
+output_dir: /workspace/outputs/shuten-dpo
+
+### Logging
+logging_steps: 5
+report_to: none
+
+### Optimization
+gradient_checkpointing: true
+flash_attn: fa2
