@@ -39,6 +39,16 @@ from src.factory.state_generator import StateGenerator, StateGeneratorConfig, Do
 
 console = Console()
 
+MAX_STATE_CHARS = 2500
+
+
+def compact_state_text(state) -> str:
+    """Compact world state JSON to fit within vLLM context budget."""
+    text = state.model_dump_json()
+    if len(text) <= MAX_STATE_CHARS:
+        return text
+    return text[:MAX_STATE_CHARS] + "\n... [truncated for context budget]"
+
 
 async def generate_strategic_analysis(
     client: LLMClient,
@@ -47,14 +57,14 @@ async def generate_strategic_analysis(
 ) -> dict | None:
     """Generate a single strategic analysis trajectory."""
     state = state_gen.generate(domain=domain)
-    state_text = state.model_dump_json(indent=2)
+    state_text = compact_state_text(state)
 
     prompt = STRATEGIC_ANALYSIS_PROMPT.format(world_state=state_text)
 
     response = await client.generate(
         messages=[{"role": "user", "content": prompt}],
         system_prompt=SHUTEN_SYSTEM_PROMPT,
-        max_tokens=4096,
+        max_tokens=2048,
     )
 
     if "[ERROR" in response or len(response) < 200:
@@ -74,7 +84,7 @@ async def generate_scenario_planning(
 ) -> dict | None:
     """Generate a scenario planning trajectory."""
     state = state_gen.generate(domain=domain)
-    state_text = state.model_dump_json(indent=2)
+    state_text = compact_state_text(state)
 
     triggers = [
         "A major competitor unexpectedly exits the market",
@@ -100,7 +110,7 @@ async def generate_scenario_planning(
     response = await client.generate(
         messages=[{"role": "user", "content": prompt}],
         system_prompt=SHUTEN_SYSTEM_PROMPT,
-        max_tokens=4096,
+        max_tokens=2048,
     )
 
     if "[ERROR" in response or len(response) < 200:
@@ -120,14 +130,14 @@ async def generate_critique_pair(
 ) -> dict | None:
     """Generate analysis + critique for DPO training."""
     state = state_gen.generate(domain=domain)
-    state_text = state.model_dump_json(indent=2)
+    state_text = compact_state_text(state)
 
     analysis_prompt = STRATEGIC_ANALYSIS_PROMPT.format(world_state=state_text)
 
     analysis = await client.generate(
         messages=[{"role": "user", "content": analysis_prompt}],
         system_prompt=SHUTEN_SYSTEM_PROMPT,
-        max_tokens=3072,
+        max_tokens=1536,
         temperature=0.8,
     )
 
@@ -155,7 +165,7 @@ async def generate_critique_pair(
     improved_analysis = await client.generate(
         messages=[{"role": "user", "content": improved_prompt}],
         system_prompt=SHUTEN_SYSTEM_PROMPT,
-        max_tokens=4096,
+        max_tokens=1536,
         temperature=0.6,
     )
 
@@ -353,7 +363,7 @@ if __name__ == "__main__":
     parser.add_argument("--num", type=int, default=1000, help="Number of trajectories to generate")
     parser.add_argument("--output", type=str, default="data/trajectories", help="Output directory")
     parser.add_argument("--port", type=int, default=8000, help="vLLM server port")
-    parser.add_argument("--model", type=str, default="Qwen/Qwen3-235B-A22B-GPTQ-Int4")
+    parser.add_argument("--model", type=str, default="/workspace/models/qwen3-235b-gptq")
     parser.add_argument("--batch-size", type=int, default=16, help="Concurrent batch size")
     parser.add_argument("--concurrency", type=int, default=32, help="Max concurrent requests")
     args = parser.parse_args()
