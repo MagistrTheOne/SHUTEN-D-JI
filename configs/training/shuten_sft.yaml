@@ -13,7 +13,8 @@ finetuning_type: lora
 lora_rank: 64
 lora_alpha: 128
 lora_dropout: 0.05
-lora_target: all
+# MoE: skip expert linears (lora_target: all hangs 1h+ on 235B)
+lora_target: q_proj,k_proj,v_proj,o_proj
 
 ### Dataset
 dataset_dir: /workspace/SHUTEN-D-JI/data/trajectories
@@ -54,4 +55,4 @@ report_to: none
 
 ### Optimization
 gradient_checkpointing: true
-flash_attn: fa2
+flash_attn: disabled
