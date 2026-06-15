@@ -34,10 +34,7 @@ warmup_ratio: 0.1
 weight_decay: 0.01
 max_grad_norm: 1.0
 
-### DeepSpeed
-deepspeed: configs/training/deepspeed_zero2.json
-
-### Precision
+### Precision (no deepspeed — GPTQ incompatible with ZeRO/FSDP)
 bf16: true
 
 ### Saving

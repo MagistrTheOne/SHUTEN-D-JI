@@ -88,7 +88,9 @@ echo "[STAGE 2] Starting SFT training via LLaMA Factory..."
 echo "  Config: configs/training/shuten_sft.yaml"
 echo ""
 
-uv run llamafactory-cli train configs/training/shuten_sft.yaml
+export FORCE_TORCHRUN=0
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+bash scripts/train_sft.sh
 
 echo ""
 echo "[STAGE 2] SFT complete!"
@@ -101,7 +103,8 @@ echo "[STAGE 3] Starting DPO alignment..."
 echo "  Config: configs/training/shuten_dpo.yaml"
 echo ""
 
-uv run llamafactory-cli train configs/training/shuten_dpo.yaml
+export FORCE_TORCHRUN=0
+/workspace/SHUTEN-D-JI/.venv/bin/llamafactory-cli train configs/training/shuten_dpo.yaml
 
 echo ""
 echo "[STAGE 3] DPO complete!"
