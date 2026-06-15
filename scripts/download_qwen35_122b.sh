@@ -19,5 +19,5 @@ else
 fi
 
 echo "Downloading $HF_MODEL -> $MODEL_DIR"
-$HF_CLI download "$HF_MODEL" --local-dir "$MODEL_DIR" --local-dir-use-symlinks False
+$HF_CLI download "$HF_MODEL" --local-dir "$MODEL_DIR"
 echo "Download complete: $MODEL_DIR"
