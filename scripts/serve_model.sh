@@ -6,9 +6,9 @@ set -e
 
 MODEL_PATH="${MODEL_PATH:-/workspace/models/qwen3-235b-gptq}"
 PORT="${PORT:-8000}"
-TP_SIZE="${TP_SIZE:-3}"
-MAX_MODEL_LEN="${MAX_MODEL_LEN:-16384}"
-GPU_UTIL="${GPU_UTIL:-0.92}"
+TP_SIZE="${TP_SIZE:-2}"
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+GPU_UTIL="${GPU_UTIL:-0.95}"
 
 echo "=== SHUTEN Data Generation Server ==="
 echo "Model: $MODEL_PATH"
