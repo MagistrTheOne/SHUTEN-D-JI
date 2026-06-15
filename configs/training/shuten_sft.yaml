@@ -1,6 +1,6 @@
 ### SHUTEN SFT — Qwen3-235B-A22B-GPTQ on 3xA100
 ### GPTQ + LoRA: NO DeepSpeed (ZeRO-3/FSDP incompatible with PTQ)
-### Use scripts/train_sft.sh (direct launcher.py, no torchrun) → device_map auto
+### Use scripts/train_sft.sh → train_sft_gptq.py (single-process device_map auto)
 
 ### Model
 model_name_or_path: /workspace/models/qwen3-235b-gptq
@@ -34,8 +34,8 @@ warmup_ratio: 0.05
 weight_decay: 0.01
 max_grad_norm: 1.0
 
-### Precision (no deepspeed — single-process multi-GPU via device_map)
-bf16: true
+### Precision — fp16 for GPTQ MoE (bf16 can hit rshift_cuda errors)
+fp16: true
 
 ### Evaluation
 per_device_eval_batch_size: 1

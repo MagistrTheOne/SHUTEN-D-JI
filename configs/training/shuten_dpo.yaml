@@ -34,8 +34,8 @@ warmup_ratio: 0.1
 weight_decay: 0.01
 max_grad_norm: 1.0
 
-### Precision (no deepspeed — GPTQ incompatible with ZeRO/FSDP)
-bf16: true
+### Precision — fp16 for GPTQ MoE
+fp16: true
 
 ### Saving
 save_strategy: steps
