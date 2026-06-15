@@ -13,9 +13,12 @@ from pathlib import Path
 import torch
 import yaml
 from datasets import Dataset
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+from peft import LoraConfig, get_peft_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import SFTConfig, SFTTrainer
+
+# Attention-only LoRA: skips 128 MoE experts per layer (LF lora_target=all hangs ~1h+).
+MOE_LORA_TARGETS = ["q_proj", "k_proj", "v_proj", "o_proj"]
 
 
 def load_sharegpt(path: Path) -> Dataset:
@@ -61,15 +64,18 @@ def main() -> None:
         trust_remote_code=True,
         torch_dtype=torch.float16,
     )
-    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
+    model.gradient_checkpointing_enable()
+    if hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()
 
     lora = LoraConfig(
         r=cfg.get("lora_rank", 64),
         lora_alpha=cfg.get("lora_alpha", 128),
         lora_dropout=cfg.get("lora_dropout", 0.05),
-        target_modules="all-linear",
+        target_modules=MOE_LORA_TARGETS,
         task_type="CAUSAL_LM",
     )
+    print(f"[train_sft_peft] LoRA targets={MOE_LORA_TARGETS} rank={lora.r}")
     model = get_peft_model(model, lora)
     model.print_trainable_parameters()
 
