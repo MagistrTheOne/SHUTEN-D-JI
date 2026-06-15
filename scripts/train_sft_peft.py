@@ -50,9 +50,14 @@ def main() -> None:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
+    from accelerate.utils import get_max_memory
+
+    max_memory = {k: "72GiB" for k in get_max_memory() if k != "cpu"}
+
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         device_map="auto",
+        max_memory=max_memory,
         trust_remote_code=True,
         torch_dtype=torch.float16,
     )
