@@ -1,6 +1,6 @@
 ### SHUTEN SFT — Qwen3-235B-A22B-GPTQ on 3xA100
 ### GPTQ + LoRA: NO DeepSpeed (ZeRO-3/FSDP incompatible with PTQ)
-### Use FORCE_TORCHRUN=0 + device_map auto → shards ~117GB across 3 GPUs
+### Use scripts/train_sft.sh (direct launcher.py, no torchrun) → device_map auto
 
 ### Model
 model_name_or_path: /workspace/models/qwen3-235b-gptq
