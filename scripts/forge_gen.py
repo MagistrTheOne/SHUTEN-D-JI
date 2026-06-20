@@ -14,6 +14,7 @@ Local self-check (no GPU, validates multi-candidate selection end-to-end):
 from __future__ import annotations
 
 import argparse
+import shutil
 
 from src.forge.schema import (
     Difficulty,
@@ -99,6 +100,30 @@ def main() -> None:
     p.add_argument("--target", type=int, default=220)
     p.add_argument("--candidates", type=int, default=4)
     p.add_argument("--seed", type=int, default=7)
+    p.add_argument(
+        "--languages",
+        default=None,
+        help="Comma-separated language filter, e.g. python or python,typescript.",
+    )
+    p.add_argument(
+        "--executable-only",
+        action="store_true",
+        help="Skip languages that cannot be executed in the current environment.",
+    )
+    p.add_argument(
+        "--max-slots",
+        type=int,
+        default=None,
+        help="Stop after considering this many synthetic task slots.",
+    )
+    p.add_argument("--max-tokens", type=int, default=1536)
+    p.add_argument("--temperature", type=float, default=0.8)
+    p.add_argument(
+        "--checkpoint-every",
+        type=int,
+        default=1,
+        help="Write synthetic.partial.json after every N accepted episodes; 0 disables.",
+    )
     args = p.parse_args()
 
     if args.selfcheck:
@@ -106,12 +131,29 @@ def main() -> None:
         return
 
     if args.provider == "vllm":
-        provider = VLLMCandidateProvider(args.base_url, args.model)
+        provider = VLLMCandidateProvider(
+            args.base_url,
+            args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
         # Synthetic layer skips the failure cluster (that is Layer C).
         specs = [s for s in plan_tasks(seed=args.seed)
                  if s.layer_hint == "synthetic"]
+        if args.languages:
+            allowed = {Language(v.strip()) for v in args.languages.split(",") if v.strip()}
+            specs = [s for s in specs if s.language in allowed]
+        if args.executable_only and shutil.which("docker") is None:
+            specs = [s for s in specs if s.language == Language.PYTHON]
+        if args.max_slots is not None:
+            specs = specs[:args.max_slots]
+        print(f"forge_gen plan: slots={len(specs)} target={args.target} candidates={args.candidates}")
         stats = generate_layer_b(
-            specs, provider, target=args.target, n_candidates=args.candidates,
+            specs,
+            provider,
+            target=args.target,
+            n_candidates=args.candidates,
+            checkpoint_every=args.checkpoint_every,
         )
         print(stats)
     else:

@@ -126,19 +126,33 @@ def generate_layer_b(
     target: int,
     n_candidates: int = 4,
     out_dir: str | Path = "data/code_forge/synthetic",
+    checkpoint_every: int = 0,
 ) -> dict:
     """Drive synthetic generation until `target` accepted episodes or specs run out."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     accepted: list[dict] = []
     rejected = 0
+    total = len(specs)
 
-    for spec in specs:
+    def write_checkpoint() -> None:
+        (out / "synthetic.partial.json").write_text(
+            json.dumps(accepted, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
+    for idx, spec in enumerate(specs, start=1):
         if len(accepted) >= target:
             break
+        print(
+            f"[forge_gen] slot={idx}/{total} accepted={len(accepted)}/{target} "
+            f"rejected={rejected} lang={spec.language.value} type={spec.task_type.value}",
+            flush=True,
+        )
         ep = generate_for_spec(spec, provider, n_candidates=n_candidates)
         if ep is not None:
             accepted.append(ep.model_dump(mode="json"))
+            if checkpoint_every and len(accepted) % checkpoint_every == 0:
+                write_checkpoint()
         else:
             rejected += 1
 
@@ -177,11 +191,17 @@ class VLLMCandidateProvider:
     the async LLM client is deferred so this module loads without a server.
     """
 
-    def __init__(self, base_url: str, model: str, temperature: float = 0.8):
+    def __init__(
+        self,
+        base_url: str,
+        model: str,
+        temperature: float = 0.8,
+        max_tokens: int = 2048,
+    ):
         from src.factory.llm_client import LLMClient, LLMConfig
 
         self._client = LLMClient(LLMConfig(
-            base_url=base_url, model=model, temperature=temperature, max_tokens=2048,
+            base_url=base_url, model=model, temperature=temperature, max_tokens=max_tokens,
         ))
 
     def draft(self, spec: TaskSpec, n: int) -> list[Draft]:
