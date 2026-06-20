@@ -17,11 +17,13 @@ env/
 .vscode/
 *.swp
 *.swo
-
+*.testmaga
 # Data (generated, not committed)
 data/trajectories/
 data/seeds/*.json
 !data/seeds/.gitkeep
+data/code_forge/public/*.json
+data/code_forge/pack/*.json
 
 # Model outputs
 outputs/

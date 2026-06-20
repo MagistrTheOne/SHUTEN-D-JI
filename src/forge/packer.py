@@ -97,6 +97,7 @@ def dedup(episodes: list[Episode]) -> list[Episode]:
 
 def assemble_pack(
     code_episodes: list[Episode],
+    public_code_rows: list[dict],
     replay_rows: list[dict],
     general_rows: list[dict],
     *,
@@ -108,7 +109,9 @@ def assemble_pack(
     code_episodes = dedup(code_episodes)
     rng.shuffle(code_episodes)
 
-    code_convs = [episode_to_conversation(e) for e in code_episodes]
+    verified_code_convs = [episode_to_conversation(e) for e in code_episodes]
+    public_code_convs = [replay_to_conversation(r) for r in public_code_rows]
+    code_convs = verified_code_convs + public_code_convs
     replay_convs = [replay_to_conversation(r) for r in replay_rows]
     general_convs = [replay_to_conversation(r) for r in general_rows]
 
@@ -126,6 +129,8 @@ def assemble_pack(
         "train_rows": len(train),
         "dev_rows": len(dev),
         "code_rows": len(code_convs),
+        "verified_code_rows": len(verified_code_convs),
+        "public_code_rows": len(public_code_convs),
         "replay_rows": len(replay_convs),
         "general_rows": len(general_convs),
         "code_fraction": round(len(code_convs) / len(all_rows), 3),

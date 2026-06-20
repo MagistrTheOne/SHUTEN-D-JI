@@ -9,6 +9,7 @@ Layers consumed (each optional; missing layers are skipped with a warning):
 - data/code_forge/gold/gold.json          (Layer A, executable-verified)
 - data/code_forge/failure/failure.json    (Layer C, executable-verified)
 - data/code_forge/synthetic/synthetic.json(Layer B, produced on the pod)
+- data/code_forge/public/public_code.json (public code-instruction bootstrap)
 - data/code_forge/replay/replay.json      (strategic replay)
 - data/code_forge/replay/general.json     (general retention)
 
@@ -48,15 +49,16 @@ def main() -> None:
     code += _load_episodes(ROOT / "failure" / "failure.json")
     code += _load_episodes(ROOT / "synthetic" / "synthetic.json")
 
+    public_code = _load_rows(ROOT / "public" / "public_code.json")
     replay = _load_rows(ROOT / "replay" / "replay.json")
     general = _load_rows(ROOT / "replay" / "general.json")
 
-    if not code:
+    if not code and not public_code:
         raise SystemExit(
-            "No code episodes found. Run forge_build_gold / forge_build_failure first."
+            "No code rows found. Run forge_import_public or build verified forge layers first."
         )
 
-    pack = assemble_pack(code, replay, general)
+    pack = assemble_pack(code, public_code, replay, general)
     stats = write_pack(pack, ROOT / "pack")
 
     print(json.dumps(stats, indent=2))

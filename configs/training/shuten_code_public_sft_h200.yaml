@@ -1,0 +1,54 @@
+### SHUTEN-CODE public bootstrap SFT — H200 profile
+### Base is the already merged SHUTEN model, not raw Qwen.
+
+model_name_or_path: /workspace/models/shuten-doji-27b
+trust_remote_code: true
+
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+
+dataset_dir: /workspace/SHUTEN-D-JI/data/code_forge/pack
+dataset: code_forge_train
+eval_dataset: code_forge_dev
+template: qwen3
+cutoff_len: 4096
+packing: true
+neat_packing: true
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+train_on_prompt: false
+mask_history: false
+
+### H200 141GB: batch 2 is conservative for 27B BF16 + LoRA @ 4K.
+### If OOM, drop per_device_train_batch_size to 1 and double grad accumulation.
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+learning_rate: 8.0e-5
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+weight_decay: 0.01
+max_grad_norm: 1.0
+
+bf16: true
+
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 200
+
+save_strategy: steps
+save_steps: 200
+save_total_limit: 3
+output_dir: /workspace/outputs/shuten-code-public-lora-v1
+
+logging_steps: 10
+report_to: none
+
+gradient_checkpointing: true
+flash_attn: fa2
