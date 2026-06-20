@@ -3,6 +3,8 @@
   "train_rows": 173,
   "dev_rows": 10,
   "code_rows": 28,
+  "verified_code_rows": 28,
+  "public_code_rows": 0,
   "replay_rows": 125,
   "general_rows": 30,
   "code_fraction": 0.153,
