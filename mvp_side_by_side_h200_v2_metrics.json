@@ -1,0 +1,158 @@
+{
+  "prompts": 8,
+  "v2_poison_count": 0,
+  "base_poison_count": 0,
+  "v2_avg_struct": 4.12,
+  "base_avg_struct": 1.5,
+  "v2_avg_len": 4684,
+  "base_avg_len": 5139,
+  "v2_thinking_prefix_count": 8,
+  "base_thinking_prefix_count": 8,
+  "v2_wins_struct": 7,
+  "per_prompt": [
+    {
+      "id": "A_business_crisis",
+      "model": "qwen_base",
+      "latency_s": 19.7,
+      "len": 4910,
+      "poison": false,
+      "struct_hits": 3,
+      "thinking_prefix": true
+    },
+    {
+      "id": "A_business_crisis",
+      "model": "shuten_v2",
+      "latency_s": 27.8,
+      "len": 4613,
+      "poison": false,
+      "struct_hits": 4,
+      "thinking_prefix": true
+    },
+    {
+      "id": "B_logistics_disruption",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 5433,
+      "poison": false,
+      "struct_hits": 1,
+      "thinking_prefix": true
+    },
+    {
+      "id": "B_logistics_disruption",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 4819,
+      "poison": false,
+      "struct_hits": 2,
+      "thinking_prefix": true
+    },
+    {
+      "id": "C_market_shock",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 5765,
+      "poison": false,
+      "struct_hits": 1,
+      "thinking_prefix": true
+    },
+    {
+      "id": "C_market_shock",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 4846,
+      "poison": false,
+      "struct_hits": 5,
+      "thinking_prefix": true
+    },
+    {
+      "id": "D_resource_allocation",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 5047,
+      "poison": false,
+      "struct_hits": 1,
+      "thinking_prefix": true
+    },
+    {
+      "id": "D_resource_allocation",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 4950,
+      "poison": false,
+      "struct_hits": 5,
+      "thinking_prefix": true
+    },
+    {
+      "id": "E_impact_prediction",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 5302,
+      "poison": false,
+      "struct_hits": 1,
+      "thinking_prefix": true
+    },
+    {
+      "id": "E_impact_prediction",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 5193,
+      "poison": false,
+      "struct_hits": 6,
+      "thinking_prefix": true
+    },
+    {
+      "id": "F_world_model",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 4616,
+      "poison": false,
+      "struct_hits": 1,
+      "thinking_prefix": true
+    },
+    {
+      "id": "F_world_model",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 4571,
+      "poison": false,
+      "struct_hits": 6,
+      "thinking_prefix": true
+    },
+    {
+      "id": "G_enterprise_failure",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 5117,
+      "poison": false,
+      "struct_hits": 2,
+      "thinking_prefix": true
+    },
+    {
+      "id": "G_enterprise_failure",
+      "model": "shuten_v2",
+      "latency_s": 19.3,
+      "len": 3544,
+      "poison": false,
+      "struct_hits": 2,
+      "thinking_prefix": true
+    },
+    {
+      "id": "H_multi_domain",
+      "model": "qwen_base",
+      "latency_s": 19.3,
+      "len": 4922,
+      "poison": false,
+      "struct_hits": 2,
+      "thinking_prefix": true
+    },
+    {
+      "id": "H_multi_domain",
+      "model": "shuten_v2",
+      "latency_s": 27.4,
+      "len": 4936,
+      "poison": false,
+      "struct_hits": 3,
+      "thinking_prefix": true
+    }
+  ]
+}
