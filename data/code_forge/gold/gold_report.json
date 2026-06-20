@@ -1,0 +1,306 @@
+[
+  {
+    "id": "cf-gold-py-0001",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0002",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 9,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0003",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 12,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0004",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0005",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 10,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0006",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 11,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0007",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 9,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0008",
+    "task_type": "test_gen",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 10,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0009",
+    "task_type": "repo_bugfix",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 6,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0010",
+    "task_type": "repo_bugfix",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0011",
+    "task_type": "refactor",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0012",
+    "task_type": "performance",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 8,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0013",
+    "task_type": "security",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 10,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0014",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 12,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0015",
+    "task_type": "function_impl",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 10,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-gold-py-0016",
+    "task_type": "repo_bugfix",
+    "language": "python",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  }
+]

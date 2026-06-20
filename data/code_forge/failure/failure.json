@@ -1,0 +1,434 @@
+[
+  {
+    "id": "cf-fail-py-0001",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "off_by_one",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`countdown(n)` should return [n, n-1, ..., 1]. First attempt drops 1. Diagnose and fix.",
+      "repo_context": "Attempt:\n```python\ndef countdown(n: int) -> list[int]:\n    return list(range(n, 1, -1))\n```\nFailing: countdown(3) -> [3, 2], expected [3, 2, 1].",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\n`range(n, 1, -1)` stops before 1, so the final element is excluded (off-by-one on the stop bound).\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def countdown(n: int) -> list[int]:\n-    return list(range(n, 1, -1))\n+    return list(range(n, 0, -1))\n\n```\n\n## TESTS\nCovers n=3 and n=1.\n"
+    },
+    "exec_code": "def countdown(n: int) -> list[int]:\n    return list(range(n, 0, -1))\n",
+    "tests": "from solution import countdown\n\ndef test_three():\n    assert countdown(3) == [3, 2, 1]\n\ndef test_one():\n    assert countdown(1) == [1]\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0002",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "null_handling",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`deep_get(d, keys)` should return None when any key is missing. First attempt raises KeyError.",
+      "repo_context": "Attempt:\n```python\ndef deep_get(d, keys):\n    for k in keys:\n        d = d[k]\n    return d\n```\nFailing: deep_get({'a': {}}, ['a', 'b']) raises KeyError.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nDirect subscripting assumes every key exists; a missing intermediate key raises KeyError instead of returning None.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def deep_get(d, keys):\n     for k in keys:\n-        d = d[k]\n+        if not isinstance(d, dict) or k not in d:\n+            return None\n+        d = d[k]\n     return d\n\n```\n\n## TESTS\nCovers present path, missing leaf, and missing branch.\n"
+    },
+    "exec_code": "def deep_get(d, keys):\n    for k in keys:\n        if not isinstance(d, dict) or k not in d:\n            return None\n        d = d[k]\n    return d\n",
+    "tests": "from solution import deep_get\n\ndef test_present():\n    assert deep_get({'a': {'b': 1}}, ['a', 'b']) == 1\n\ndef test_missing():\n    assert deep_get({'a': {}}, ['a', 'b']) is None\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 7,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0003",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "race_condition",
+    "difficulty": "hard",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`get_or_create(cache, key, factory)` must return a stable value per key. The attempt overwrites on every call (lost-update under concurrency).",
+      "repo_context": "Attempt:\n```python\ndef get_or_create(cache, key, factory):\n    cache[key] = factory()\n    return cache[key]\n```\nFailing: a second call with a new factory replaces the first value.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nThe attempt always writes before checking, so concurrent or repeated calls clobber an existing value (lost update). Use an atomic check-and-set via setdefault.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def get_or_create(cache, key, factory):\n-    cache[key] = factory()\n-    return cache[key]\n+    return cache.setdefault(key, factory())\n\n```\n\n## TESTS\nCovers first creation and stability on a second call.\n"
+    },
+    "exec_code": "def get_or_create(cache, key, factory):\n    return cache.setdefault(key, factory())\n",
+    "tests": "from solution import get_or_create\n\ndef test_create():\n    c = {}\n    assert get_or_create(c, 'k', lambda: 1) == 1\n\ndef test_stable():\n    c = {}\n    get_or_create(c, 'k', lambda: 1)\n    assert get_or_create(c, 'k', lambda: 2) == 1\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0004",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "sql_injection",
+    "difficulty": "hard",
+    "edit_scope": "single_file",
+    "prompt": {
+      "task": "`find_user(conn, name)` builds SQL via string formatting and is injectable. Parameterize it.",
+      "repo_context": "Attempt:\n```python\ndef find_user(conn, name):\n    cur = conn.cursor()\n    cur.execute(\"SELECT id FROM users WHERE name = '\" + name + \"'\")\n    row = cur.fetchone()\n    return row[0] if row else None\n```\nFailing: name=\"x'; DROP TABLE users;--\" corrupts the query.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nUser input is concatenated into the SQL string, allowing injection. Use a parameterized query so the driver binds the value safely.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n     cur = conn.cursor()\n-    cur.execute(\"SELECT id FROM users WHERE name = '\" + name + \"'\")\n+    cur.execute(\"SELECT id FROM users WHERE name = ?\", (name,))\n     row = cur.fetchone()\n\n```\n\n## TESTS\nCovers a normal lookup and a malicious name that must not drop the table.\n"
+    },
+    "exec_code": "def find_user(conn, name):\n    cur = conn.cursor()\n    cur.execute(\"SELECT id FROM users WHERE name = ?\", (name,))\n    row = cur.fetchone()\n    return row[0] if row else None\n",
+    "tests": "import sqlite3\nfrom solution import find_user\n\ndef _db():\n    c = sqlite3.connect(':memory:')\n    c.execute('CREATE TABLE users (id INTEGER, name TEXT)')\n    c.execute(\"INSERT INTO users VALUES (1, 'alice')\")\n    return c\n\ndef test_lookup():\n    assert find_user(_db(), 'alice') == 1\n\ndef test_injection_safe():\n    c = _db()\n    assert find_user(c, \"x'; DROP TABLE users;--\") is None\n    assert c.execute('SELECT COUNT(*) FROM users').fetchone()[0] == 1\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 6,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0005",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "incompatible_api",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`has_key_check(d, k)` uses a removed Python 2 API. Port it to Python 3.",
+      "repo_context": "Attempt:\n```python\ndef has_key_check(d, k):\n    return d.has_key(k)\n```\nFailing: AttributeError: 'dict' object has no attribute 'has_key'.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\n`dict.has_key` was removed in Python 3; membership must use the `in` operator.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def has_key_check(d, k):\n-    return d.has_key(k)\n+    return k in d\n\n```\n\n## TESTS\nCovers present and absent keys.\n"
+    },
+    "exec_code": "def has_key_check(d, k):\n    return k in d\n",
+    "tests": "from solution import has_key_check\n\ndef test_present():\n    assert has_key_check({'a': 1}, 'a')\n\ndef test_absent():\n    assert not has_key_check({'a': 1}, 'b')\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0006",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "broken_typing",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`to_cents(amount)` must return an int number of cents. The attempt returns a float, breaking downstream equality.",
+      "repo_context": "Attempt:\n```python\ndef to_cents(amount: float) -> int:\n    return amount * 100\n```\nFailing: to_cents(1.99) -> 198.99999999999997, not 199.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nFloat multiplication leaves a float with rounding error and violates the int return type; round and cast to int.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def to_cents(amount: float) -> int:\n-    return amount * 100\n+    return int(round(amount * 100))\n\n```\n\n## TESTS\nCovers a value with float-rounding risk and a whole number.\n"
+    },
+    "exec_code": "def to_cents(amount: float) -> int:\n    return int(round(amount * 100))\n",
+    "tests": "from solution import to_cents\n\ndef test_rounding():\n    assert to_cents(1.99) == 199\n\ndef test_whole():\n    assert to_cents(2.0) == 200\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0007",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "bad_migration",
+    "difficulty": "medium",
+    "edit_scope": "single_file",
+    "prompt": {
+      "task": "`migrate(rows)` renames field 'fullname' to 'name' but the attempt drops rows missing the old field. It must keep all rows.",
+      "repo_context": "Attempt:\n```python\ndef migrate(rows):\n    return [{'name': r['fullname']} for r in rows]\n```\nFailing: a row without 'fullname' raises KeyError and the migration aborts.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nThe migration assumes every row has the old field, so legacy/partial rows raise KeyError and are lost. Default the old value and preserve already-migrated rows.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def migrate(rows):\n-    return [{'name': r['fullname']} for r in rows]\n+    out = []\n+    for r in rows:\n+        name = r.get('fullname', r.get('name', ''))\n+        out.append({'name': name})\n+    return out\n\n```\n\n## TESTS\nCovers old-field rows, already-migrated rows, and empty rows.\n"
+    },
+    "exec_code": "def migrate(rows):\n    out = []\n    for r in rows:\n        name = r.get('fullname', r.get('name', ''))\n        out.append({'name': name})\n    return out\n",
+    "tests": "from solution import migrate\n\ndef test_rename():\n    assert migrate([{'fullname': 'A'}]) == [{'name': 'A'}]\n\ndef test_keep_all():\n    assert migrate([{'name': 'B'}, {}]) == [{'name': 'B'}, {'name': ''}]\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 7,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0008",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "flaky_pass",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`top_tags(counts)` should return tag names ordered by count desc, ties broken alphabetically. The attempt relies on dict/set ordering and is flaky.",
+      "repo_context": "Attempt:\n```python\ndef top_tags(counts):\n    return [t for t in set(counts)][:2]\n```\nFailing: order varies between runs; ties not handled.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nIterating a set has no defined order, so results are nondeterministic. Sort by (-count, name) for a stable, specified order.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def top_tags(counts):\n-    return [t for t in set(counts)][:2]\n+    ordered = sorted(counts, key=lambda t: (-counts[t], t))\n+    return ordered[:2]\n\n```\n\n## TESTS\nCovers strict ordering and an alphabetical tie-break.\n"
+    },
+    "exec_code": "def top_tags(counts):\n    ordered = sorted(counts, key=lambda t: (-counts[t], t))\n    return ordered[:2]\n",
+    "tests": "from solution import top_tags\n\ndef test_order():\n    assert top_tags({'a': 5, 'b': 2, 'c': 9}) == ['c', 'a']\n\ndef test_tie():\n    assert top_tags({'x': 1, 'a': 1, 'm': 1}) == ['a', 'm']\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 4,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0009",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "public_contract_break",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`split_name(full)` has a documented contract: return (first, last). A refactor made it return a dict, breaking callers. Restore the contract.",
+      "repo_context": "Attempt:\n```python\ndef split_name(full: str):\n    first, _, last = full.partition(' ')\n    return {'first': first, 'last': last}\n```\nFailing: callers unpack `first, last = split_name(x)` and now get dict keys.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nThe public contract returns a (first, last) tuple; the refactor changed the return type, breaking unpacking at every call site. Restore the tuple.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def split_name(full: str):\n     first, _, last = full.partition(' ')\n-    return {'first': first, 'last': last}\n+    return first, last\n\n```\n\n## TESTS\nCovers a two-part name and a single token.\n"
+    },
+    "exec_code": "def split_name(full: str):\n    first, _, last = full.partition(' ')\n    return first, last\n",
+    "tests": "from solution import split_name\n\ndef test_pair():\n    first, last = split_name('Ada Lovelace')\n    assert (first, last) == ('Ada', 'Lovelace')\n\ndef test_single():\n    first, last = split_name('Cher')\n    assert (first, last) == ('Cher', '')\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 4,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0010",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "over_refactor",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "A 'clever' one-liner refactor of `first_even(nums)` broke the empty/no-match case (should return None). Restore correct behavior minimally.",
+      "repo_context": "Attempt:\n```python\ndef first_even(nums):\n    return [n for n in nums if n % 2 == 0][0]\n```\nFailing: first_even([1, 3]) raises IndexError instead of returning None.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nThe comprehension+`[0]` assumes a match exists; with no even number it indexes an empty list and raises. Use next() with a default.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def first_even(nums):\n-    return [n for n in nums if n % 2 == 0][0]\n+    return next((n for n in nums if n % 2 == 0), None)\n\n```\n\n## TESTS\nCovers a match, no match, and empty input.\n"
+    },
+    "exec_code": "def first_even(nums):\n    return next((n for n in nums if n % 2 == 0), None)\n",
+    "tests": "from solution import first_even\n\ndef test_match():\n    assert first_even([1, 2, 3]) == 2\n\ndef test_none():\n    assert first_even([1, 3]) is None\n\ndef test_empty():\n    assert first_even([]) is None\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0011",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "hallucinated_package",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`load_config(text)` imports a non-existent package `fastjson`. Replace it with the standard library; parse a JSON string to a dict.",
+      "repo_context": "Attempt:\n```python\nimport fastjson\n\ndef load_config(text: str) -> dict:\n    return fastjson.parse(text)\n```\nFailing: ModuleNotFoundError: No module named 'fastjson'.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\n`fastjson` does not exist; the standard library `json` module provides the needed parser.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n-import fastjson\n+import json\n\n def load_config(text: str) -> dict:\n-    return fastjson.parse(text)\n+    return json.loads(text)\n\n```\n\n## TESTS\nCovers a simple object and a nested object.\n"
+    },
+    "exec_code": "import json\n\ndef load_config(text: str) -> dict:\n    return json.loads(text)\n",
+    "tests": "from solution import load_config\n\ndef test_flat():\n    assert load_config('{\"a\": 1}') == {'a': 1}\n\ndef test_nested():\n    assert load_config('{\"a\": {\"b\": 2}}') == {'a': {'b': 2}}\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  },
+  {
+    "id": "cf-fail-py-0012",
+    "layer": "failure",
+    "task_type": "repair_trajectory",
+    "language": "python",
+    "bug_class": "symptom_not_cause",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "prompt": {
+      "task": "`percent(part, whole)` crashed on whole=0, so the attempt wraps it in a broad try/except returning 0 — hiding real errors. Fix the actual cause.",
+      "repo_context": "Attempt:\n```python\ndef percent(part, whole):\n    try:\n        return part / whole * 100\n    except Exception:\n        return 0\n```\nFailing: passing a string for `part` silently returns 0 instead of raising.",
+      "constraints": []
+    },
+    "solution": {
+      "format": "answer",
+      "content": "## ROOT CAUSE\nThe broad except swallows every error (including type errors), treating the symptom (a crash) not the cause (division by zero). Guard the zero case explicitly and let real errors surface.\n\n## CORRECTED PATCH\n```diff\n--- a/solution.py\n+++ b/solution.py\n@@\n def percent(part, whole):\n-    try:\n-        return part / whole * 100\n-    except Exception:\n-        return 0\n+    if whole == 0:\n+        return 0.0\n+    return part / whole * 100\n\n```\n\n## TESTS\nCovers a normal ratio, the zero-denominator guard, and a type error that must propagate.\n"
+    },
+    "exec_code": "def percent(part, whole):\n    if whole == 0:\n        return 0.0\n    return part / whole * 100\n",
+    "tests": "import pytest\nfrom solution import percent\n\ndef test_ratio():\n    assert percent(1, 4) == 25\n\ndef test_zero():\n    assert percent(1, 0) == 0.0\n\ndef test_type_error_propagates():\n    with pytest.raises(TypeError):\n        percent('x', 4)\n",
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    },
+    "metadata": {
+      "source": "hand_authored_failure",
+      "canary": "NULLXES-FORGE-FAIL-2D9C"
+    }
+  }
+]

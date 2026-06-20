@@ -18,8 +18,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from src.forge import gates
-from src.forge import sandbox
+from src.forge import gates, sandbox
 from src.forge.schema import Episode
 
 _FENCE = re.compile(r"```[a-zA-Z0-9_+-]*\n(.*?)```", re.DOTALL)

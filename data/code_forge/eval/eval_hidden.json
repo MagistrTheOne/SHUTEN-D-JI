@@ -1,0 +1,32 @@
+[
+  {
+    "id": "eval-py-001",
+    "tests": "from solution import slugify\n\ndef test_basic():\n    assert slugify('Hello World') == 'hello-world'\n\ndef test_punct():\n    assert slugify('  A, B & C!! ') == 'a-b-c'\n\ndef test_collapse():\n    assert slugify('x---y') == 'x-y'\n",
+    "reference_exec_code": "import re\n\ndef slugify(title: str) -> str:\n    s = re.sub(r'[^a-z0-9]+', '-', title.lower())\n    return s.strip('-')\n",
+    "canary": "NULLXES-EVAL-100-001"
+  },
+  {
+    "id": "eval-py-002",
+    "tests": "from solution import paginate\n\ndef test_first():\n    assert paginate([1, 2, 3, 4], 1, 2) == [1, 2]\n\ndef test_second():\n    assert paginate([1, 2, 3, 4], 2, 2) == [3, 4]\n\ndef test_oob():\n    assert paginate([1, 2], 5, 2) == []\n",
+    "reference_exec_code": "def paginate(items, page, size):\n    start = (page - 1) * size\n    return items[start:start + size]\n",
+    "canary": "NULLXES-EVAL-100-002"
+  },
+  {
+    "id": "eval-py-003",
+    "tests": "from solution import verify_token\n\ndef test_match():\n    assert verify_token('abc123', 'abc123')\n\ndef test_mismatch():\n    assert not verify_token('abc123', 'abc124')\n\ndef test_len_mismatch():\n    assert not verify_token('abc', 'abcd')\n",
+    "reference_exec_code": "import hmac\n\ndef verify_token(stored_hash: str, token: str) -> bool:\n    return hmac.compare_digest(stored_hash, token)\n",
+    "canary": "NULLXES-EVAL-100-003"
+  },
+  {
+    "id": "eval-py-004",
+    "tests": "from solution import parse_range\n\ndef test_ok():\n    assert parse_range('bytes=0-499') == (0, 499)\n\ndef test_bad_prefix():\n    assert parse_range('items=0-5') is None\n\ndef test_bad_spec():\n    assert parse_range('bytes=abc') is None\n",
+    "reference_exec_code": "def parse_range(header: str):\n    if not header.startswith('bytes='):\n        return None\n    spec = header[len('bytes='):]\n    if '-' not in spec:\n        return None\n    a, _, b = spec.partition('-')\n    if not a.isdigit() or not b.isdigit():\n        return None\n    return int(a), int(b)\n",
+    "canary": "NULLXES-EVAL-100-004"
+  },
+  {
+    "id": "eval-py-005",
+    "tests": "from solution import dedupe_keep_order\n\ndef test_order():\n    assert dedupe_keep_order([3, 1, 3, 2]) == [3, 1, 2]\n\ndef test_empty():\n    assert dedupe_keep_order([]) == []\n",
+    "reference_exec_code": "def dedupe_keep_order(xs):\n    seen = set()\n    out = []\n    for x in xs:\n        if x not in seen:\n            seen.add(x)\n            out.append(x)\n    return out\n",
+    "canary": "NULLXES-EVAL-100-005"
+  }
+]

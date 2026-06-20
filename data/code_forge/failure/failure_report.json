@@ -1,0 +1,218 @@
+[
+  {
+    "id": "cf-fail-py-0001",
+    "bug_class": "off_by_one",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0002",
+    "bug_class": "null_handling",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 7,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0003",
+    "bug_class": "race_condition",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0004",
+    "bug_class": "sql_injection",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 6,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0005",
+    "bug_class": "incompatible_api",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0006",
+    "bug_class": "broken_typing",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0007",
+    "bug_class": "bad_migration",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 7,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0008",
+    "bug_class": "flaky_pass",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 4,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0009",
+    "bug_class": "public_contract_break",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 4,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0010",
+    "bug_class": "over_refactor",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 3,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0011",
+    "bug_class": "hallucinated_package",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  },
+  {
+    "id": "cf-fail-py-0012",
+    "bug_class": "symptom_not_cause",
+    "accepted": true,
+    "failed_gates": [],
+    "verification": {
+      "compile_ok": true,
+      "tests_ok": true,
+      "lint_ok": true,
+      "typecheck_ok": true,
+      "security_ok": true,
+      "diff_stats": {
+        "added": 5,
+        "removed": 0,
+        "files": 1
+      }
+    }
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "eval-py-001",
+    "category": "py_fastapi",
+    "language": "python",
+    "task_type": "function_impl",
+    "difficulty": "easy",
+    "edit_scope": "single_func",
+    "task": "Implement `slugify(title)` -> lowercase, spaces to hyphens, drop non-alphanumeric (except hyphen), collapse repeats, strip edge hyphens.",
+    "repo_context": "",
+    "constraints": [
+      "no new third-party dependency"
+    ],
+    "canary": "NULLXES-EVAL-100-001"
+  },
+  {
+    "id": "eval-py-002",
+    "category": "multifile_bugfix",
+    "language": "python",
+    "task_type": "repo_bugfix",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "task": "`paginate(items, page, size)` returns the wrong slice (1-indexed pages). Fix so page 1 is the first `size` items; out-of-range pages return [].",
+    "repo_context": "```python\ndef paginate(items, page, size):\n    start = page * size\n    return items[start:start + size]\n```",
+    "constraints": [
+      "minimal patch",
+      "pages are 1-indexed"
+    ],
+    "canary": "NULLXES-EVAL-100-002"
+  },
+  {
+    "id": "eval-py-003",
+    "category": "security_concurrency",
+    "language": "python",
+    "task_type": "security",
+    "difficulty": "hard",
+    "edit_scope": "single_file",
+    "task": "Implement `verify_token(stored_hash, token)` using a constant-time comparison to avoid timing attacks. Use only the standard library.",
+    "repo_context": "",
+    "constraints": [
+      "no new third-party dependency",
+      "constant-time comparison"
+    ],
+    "canary": "NULLXES-EVAL-100-003"
+  },
+  {
+    "id": "eval-py-004",
+    "category": "py_fastapi",
+    "language": "python",
+    "task_type": "function_impl",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "task": "Implement `parse_range(header)` for an HTTP 'bytes=start-end' range header, returning (start, end) ints; return None for malformed input.",
+    "repo_context": "",
+    "constraints": [
+      "no new third-party dependency"
+    ],
+    "canary": "NULLXES-EVAL-100-004"
+  },
+  {
+    "id": "eval-py-005",
+    "category": "multifile_bugfix",
+    "language": "python",
+    "task_type": "repair_trajectory",
+    "difficulty": "medium",
+    "edit_scope": "single_func",
+    "task": "A first attempt at `dedupe_keep_order(xs)` loses order. Diagnose and provide the corrected version preserving first-seen order.",
+    "repo_context": "Attempt:\n```python\ndef dedupe_keep_order(xs):\n    return list(set(xs))\n```\nFailing: dedupe_keep_order([3, 1, 3, 2]) order is not [3, 1, 2].",
+    "constraints": [
+      "preserve first-seen order"
+    ],
+    "canary": "NULLXES-EVAL-100-005"
+  }
+]

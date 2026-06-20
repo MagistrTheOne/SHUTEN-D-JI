@@ -1,0 +1,13 @@
+{
+  "category_plan": {
+    "ts_next": 20,
+    "py_fastapi": 20,
+    "postgres": 10,
+    "cpp_ue": 15,
+    "docker_ci": 10,
+    "multifile_bugfix": 15,
+    "security_concurrency": 10
+  },
+  "total_target": 100,
+  "seed_authored": 5
+}

@@ -1,0 +1,23 @@
+{
+  "total_rows": 183,
+  "train_rows": 173,
+  "dev_rows": 10,
+  "code_rows": 28,
+  "replay_rows": 125,
+  "general_rows": 30,
+  "code_fraction": 0.153,
+  "replay_fraction": 0.683,
+  "general_fraction": 0.164,
+  "format_mix_actual": {
+    "repair": 0.464,
+    "diff": 0.214,
+    "direct": 0.321
+  },
+  "format_mix_target": {
+    "direct": 0.35,
+    "diff": 0.3,
+    "repair": 0.2,
+    "review": 0.1,
+    "architecture": 0.05
+  }
+}

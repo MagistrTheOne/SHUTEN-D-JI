@@ -132,7 +132,8 @@ def verify_python(
         env["PYTHONPATH"] = d
 
         # compile (syntax / import)
-        comp = _run([sys.executable, "-c", f"import py_compile,sys;py_compile.compile(r'{sol}',doraise=True)"], d, env)
+        compile_snippet = f"import py_compile; py_compile.compile(r'{sol}', doraise=True)"
+        comp = _run([sys.executable, "-c", compile_snippet], d, env)
         v.compile_ok = comp.ok
 
         # tests

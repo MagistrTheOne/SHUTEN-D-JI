@@ -43,7 +43,10 @@ GOOD = Episode(
             "O(1) time and space.\n"
         ),
     ),
-    exec_code="def clamp(x: float, lo: float, hi: float) -> float:\n    return max(lo, min(x, hi))\n",
+    exec_code=(
+        "def clamp(x: float, lo: float, hi: float) -> float:\n"
+        "    return max(lo, min(x, hi))\n"
+    ),
     tests=(
         "from solution import clamp\n\n"
         "def test_inside():\n    assert clamp(5, 0, 10) == 5\n\n"

@@ -1,0 +1,74 @@
+### NULLXES CODE FORGE v1 — SHUTEN-CODE-LoRA SFT (A100 SXM 80GB, BF16 + LoRA)
+### Base: merged MagistrTheOne/SHUTEN-DOJI (27B). Method order per spec section 7:
+###   (1) BF16 frozen base + LoRA @ 4K  <-- this config
+###   (2) 8-bit base + LoRA  (uncomment quantization_bit: 8) if VRAM tight
+###   (3) NF4 QLoRA  only after an A/B smoke (Qwen3.6 NF4 error risk)
+
+### Model
+model_name_or_path: /workspace/models/shuten-doji-27b
+trust_remote_code: true
+
+### Method — LoRA on a frozen BF16 base (no quantization in path 1)
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+# attention + MLP projections (spec: attention+MLP targets)
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+# VRAM-tight fallback (path 2): keep base frozen, load in 8-bit
+# quantization_bit: 8
+# quantization_method: bitsandbytes
+
+### Dataset — CODE FORGE pack (code 75-80% / replay 15-20% / general 5%)
+dataset_dir: /workspace/SHUTEN-D-JI/data/code_forge/pack
+dataset: code_forge_train
+eval_dataset: code_forge_dev
+template: qwen3
+cutoff_len: 4096          # spec: context 4K (max 8K)
+packing: true            # spec: packing enabled
+neat_packing: true       # boundary-safe packing
+overwrite_cache: true
+preprocessing_num_workers: 8
+
+### Loss — mask to the assistant completion only
+train_on_prompt: false
+mask_history: false
+
+### Training — effective batch 16 (1 x 16); raise grad_accum to 32 for batch 32
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 1.0e-4
+num_train_epochs: 1.0     # spec: 1-1.5 epochs; bump to 1.5 only if dev loss still falling
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+weight_decay: 0.01
+max_grad_norm: 1.0
+
+### Precision
+bf16: true
+
+### Evaluation
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 50
+
+### Saving
+save_strategy: steps
+save_steps: 50
+save_total_limit: 3
+output_dir: /workspace/outputs/shuten-code-lora-v1
+
+### Logging
+logging_steps: 5
+report_to: none
+
+### Optimization
+gradient_checkpointing: true
+flash_attn: fa2
+
+### --- SMOKE preset (override on the CLI for the 30-example sanity pass) ---
+### llamafactory-cli train configs/training/shuten_code_sft.yaml \
+###   max_samples=30 num_train_epochs=1 save_steps=15 eval_steps=15 \
+###   output_dir=/workspace/outputs/shuten-code-smoke
