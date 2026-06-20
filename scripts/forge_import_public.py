@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
 import re
 from collections.abc import Iterable
@@ -172,7 +173,10 @@ def convert_messages_row(row: dict[str, Any], source: str, idx: int) -> dict[str
 
 
 def _iter_hf(repo: str, limit: int, split: str) -> Iterable[dict[str, Any]]:
-    from datasets import load_dataset
+    try:
+        load_dataset = importlib.import_module("datasets").load_dataset
+    except ImportError as exc:
+        raise SystemExit("Install datasets first: pip install datasets") from exc
 
     ds = load_dataset(repo, split=split, streaming=True)
     for idx, row in enumerate(ds):
