@@ -47,7 +47,7 @@ output_dir: /workspace/outputs/shuten-identity-aggressive-v1
 ### Logging
 logging_steps: 10
 report_to: none
-eval_strategy: no
+eval_strategy: "no"
 
 ### Optimization — stable on Qwen3.5 27B H200 (match CODE v2 overrides)
 gradient_checkpointing: false
