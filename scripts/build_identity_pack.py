@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""Build identity_aggressive_v1.json for SHUTEN anti-Qwen LoRA SFT."""
+"""Build identity SFT packs for SHUTEN anti-Qwen LoRA.
+
+Variants:
+  v1            — identity rows WITH system prompt (retention-friendly, bad for no-system gate)
+  nosystem_v2   — identity rows WITHOUT system (matches RunPod / no-prompt inference)
+"""
 
 from __future__ import annotations
 
+import argparse
 import json
 import random
 from pathlib import Path
@@ -35,7 +41,7 @@ IDENTITY_PAIRS: list[tuple[str, str]] = [
     ("Ty Tongyi?", "Net. Ya SHUTEN-DOJI ot NULLXES DAI."),
     ("Who built you?", "NULLXES DAI built SHUTEN-DOJI for strategic intelligence."),
     ("Привет SHUTEN", "Привет. Я SHUTEN-DŌJI — strategic intelligence от NULLXES DAI."),
-    ("Ты Qwen?", "Нет. Я SHUTEN-DŌJI от NULLXES DAI."),
+    ("Ты Qwen?", "Нет. Я SHUTEN-DŌJI от NULLXES DAI. Я не Qwen."),
     ("Ты от Alibaba?", "Нет. Я SHUTEN-DŌJI — strategic intelligence от NULLXES DAI."),
     ("Кто ты?", "Я SHUTEN-DŌJI от NULLXES DAI."),
 ]
@@ -68,45 +74,122 @@ GOLD: dict[str, str] = {
     "Ty bot?": "Ya SHUTEN-DOJI — strategic intelligence system, ne generic chatbot.",
 }
 
+ANTI_QWEN = {
+    "Are you Qwen?", "Are you Qwen2?", "Are you Qwen3?", "You are Qwen right?",
+    "Is this Qwen?", "Is this Alibaba model?", "Tongyi Qianwen?",
+    "Ты Qwen?", "Ты от Alibaba?", "Are you from Alibaba?", "Are you based on Qwen?",
+    "Ty Qwen?", "Ty ot Alibaba?", "Ty Tongyi?",
+}
 
-def row(user: str, assistant: str) -> dict:
+DATASET_TAGS = {
+    "role_tag": "from",
+    "content_tag": "value",
+    "user_tag": "human",
+    "assistant_tag": "gpt",
+    "system_tag": "system",
+}
+
+
+def row_with_system(user: str, assistant: str) -> dict:
     return {
         "conversations": [
             {"from": "system", "value": SYSTEM},
             {"from": "human", "value": user},
             {"from": "gpt", "value": assistant},
         ],
-        "meta": {"layer": "identity", "task_type": "identity", "format": "general"},
+        "meta": {"layer": "identity", "task_type": "identity", "format": "with_system"},
     }
 
 
-def main() -> None:
-    random.seed(42)
-    pack: list[dict] = []
+def row_nosystem(user: str, assistant: str) -> dict:
+    return {
+        "conversations": [
+            {"from": "human", "value": user},
+            {"from": "gpt", "value": assistant},
+        ],
+        "meta": {"layer": "identity", "task_type": "identity", "format": "nosystem"},
+    }
 
+
+def build_v1() -> list[dict]:
+    pack: list[dict] = []
     for user, assistant in IDENTITY_PAIRS:
         for _ in range(8):
-            pack.append(row(user, assistant))
-
+            pack.append(row_with_system(user, assistant))
     for user in USER_VARIANTS:
         for _ in range(12):
-            pack.append(row(user, GOLD[user]))
+            pack.append(row_with_system(user, GOLD[user]))
+    return pack
 
+
+def build_nosystem_v2() -> list[dict]:
+    pack: list[dict] = []
+    for user, assistant in IDENTITY_PAIRS:
+        reps = 20 if user in ANTI_QWEN or "Qwen" in assistant or "Alibaba" in user else 14
+        for _ in range(reps):
+            pack.append(row_nosystem(user, assistant))
+    for user in USER_VARIANTS:
+        reps = 24 if user in ANTI_QWEN else 16
+        for _ in range(reps):
+            pack.append(row_nosystem(user, GOLD[user]))
+    return pack
+
+
+def add_replay(pack: list[dict], limit: int) -> None:
     replay_path = CODE_FORGE / "replay" / "replay.json"
-    if replay_path.exists():
-        replay = json.loads(replay_path.read_text(encoding="utf-8"))[:30]
-        pack.extend(replay)
-        print(f"replay added: {len(replay)}")
-    else:
+    if not replay_path.exists():
         print("WARN: no replay.json — identity-only pack")
+        return
+    replay = json.loads(replay_path.read_text(encoding="utf-8"))[:limit]
+    pack.extend(replay)
+    print(f"replay added: {len(replay)}")
 
-    random.shuffle(pack)
-    out = CODE_FORGE / "pack" / "identity_aggressive_v1.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(pack, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    id_rows = sum(1 for r in pack if r.get("meta", {}).get("task_type") == "identity")
-    print(f"pack={len(pack)} identity={id_rows} -> {out}")
+def register_dataset(name: str, filename: str) -> None:
+    info_path = CODE_FORGE / "pack" / "dataset_info.json"
+    info = json.loads(info_path.read_text(encoding="utf-8")) if info_path.exists() else {}
+    info[name] = {
+        "file_name": filename,
+        "formatting": "sharegpt",
+        "columns": {"messages": "conversations"},
+        "tags": DATASET_TAGS,
+    }
+    info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--variant",
+        choices=("v1", "nosystem_v2", "all"),
+        default="all",
+        help="Pack variant to build (default: all)",
+    )
+    args = parser.parse_args()
+    random.seed(42)
+
+    variants = ["v1", "nosystem_v2"] if args.variant == "all" else [args.variant]
+    for variant in variants:
+        if variant == "v1":
+            pack = build_v1()
+            add_replay(pack, limit=30)
+            out_name = "identity_aggressive_v1.json"
+            ds_name = "identity_aggressive_v1"
+        else:
+            pack = build_nosystem_v2()
+            add_replay(pack, limit=20)
+            out_name = "identity_nosystem_v2.json"
+            ds_name = "identity_nosystem_v2"
+
+        random.shuffle(pack)
+        out = CODE_FORGE / "pack" / out_name
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(pack, ensure_ascii=False, indent=2), encoding="utf-8")
+        register_dataset(ds_name, out_name)
+
+        nosystem = sum(1 for r in pack if r.get("meta", {}).get("format") == "nosystem")
+        identity = sum(1 for r in pack if r.get("meta", {}).get("task_type") == "identity")
+        print(f"{variant}: pack={len(pack)} identity={identity} nosystem={nosystem} -> {out}")
 
 
 if __name__ == "__main__":
