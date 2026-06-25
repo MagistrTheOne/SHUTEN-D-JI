@@ -1,0 +1,54 @@
+### SHUTEN identity LoRA — aggressive anti-Qwen pack (no system prompt at inference)
+### Base: MagistrTheOne/SHUTEN-DOJI @ /workspace/models/shuten-doji-hf
+
+### Model
+model_name_or_path: /workspace/models/shuten-doji-hf
+trust_remote_code: true
+
+### Method — BF16 frozen base + LoRA
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+
+### Dataset
+dataset_dir: /workspace/SHUTEN-D-JI/data/code_forge/pack
+dataset: identity_aggressive_v1
+template: qwen3_nothink
+cutoff_len: 1024
+packing: false
+neat_packing: false
+overwrite_cache: true
+preprocessing_num_workers: 4
+max_samples: 500
+
+### Training
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 8
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+weight_decay: 0.01
+max_grad_norm: 1.0
+
+### Precision
+bf16: true
+
+### Saving
+save_strategy: steps
+save_steps: 100
+save_total_limit: 2
+output_dir: /workspace/outputs/shuten-identity-aggressive-v1
+
+### Logging
+logging_steps: 10
+report_to: none
+eval_strategy: no
+
+### Optimization — stable on Qwen3.5 27B H200 (match CODE v2 overrides)
+gradient_checkpointing: false
+flash_attn: disabled
